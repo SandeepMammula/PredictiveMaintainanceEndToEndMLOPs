@@ -1,0 +1,31 @@
+# Data Processing
+pandas==1.4.3
+numpy==1.22.4
+
+# Machine Learning
+scikit-learn==1.3.2
+xgboost==2.0.3
+imbalanced-learn==0.11.0
+
+# MLOps Tools
+mlflow==2.9.2
+dvc==3.37.0
+feast==0.35.0
+
+# Data Validation
+great-expectations==0.18.8
+
+# Visualization (for EDA)
+matplotlib==3.8.2
+seaborn==0.13.0
+
+# Testing
+pytest==7.4.3
+
+# Utilities
+python-dotenv==1.0.0
+pyyaml==6.0.1
+
+kaggle==1.5.16
+jupyter==1.0.0
+notebook==7.0.6
