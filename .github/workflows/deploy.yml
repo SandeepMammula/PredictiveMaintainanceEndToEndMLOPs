@@ -1,0 +1,49 @@
+name: CD - Deploy to GCP
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+    
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+    
+    - name: Configure Docker for GCR
+      run: |
+        gcloud auth configure-docker gcr.io
+    
+    - name: Build and Push Docker image
+      run: |
+        docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/turbofan-api:${{ github.sha }} .
+        docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/turbofan-api:${{ github.sha }}
+        docker tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/turbofan-api:${{ github.sha }} \
+                   gcr.io/${{ secrets.GCP_PROJECT_ID }}/turbofan-api:latest
+        docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/turbofan-api:latest
+    
+    - name: Deploy to GKE
+      run: |
+        gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} \
+          --zone ${{ secrets.GKE_ZONE }}
+        
+        kubectl set image deployment/turbofan-api \
+          turbofan-api=gcr.io/${{ secrets.GCP_PROJECT_ID }}/turbofan-api:${{ github.sha }}
+        
+        kubectl rollout status deployment/turbofan-api
+    
+    - name: Deployment complete
+      run: echo "✅ Deployed to GKE"

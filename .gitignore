@@ -1,5 +1,51 @@
+# Virtual environments
 .venv/
-.env
-*.pyc
+venv/
+env/
+
+# Python
 __pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Data (large files)
+data/raw/*
+!data/raw/.gitkeep
+
+# MLflow artifacts (too large)
 mlruns/
+mlartifacts/
+
+# Exported model (large)
+model_artifact/
+
+# DVC cache
+.dvc/cache/
+
+# Reports
+reports/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+
+# Logs
+*.log
+logs/
+
+# Database
+*.db
+*.sqlite
