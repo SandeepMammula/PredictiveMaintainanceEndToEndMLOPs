@@ -18,8 +18,8 @@ data/raw/*
 mlruns/
 mlartifacts/
 
-# Exported model (large)
-model_artifact/
+# # Exported model (large)
+# model_artifact/
 
 # DVC cache
 .dvc/cache/

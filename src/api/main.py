@@ -7,6 +7,9 @@ import numpy as np
 from typing import List
 import uvicorn
 from src.api.database import PredictionLogger
+from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
+from fastapi.responses import Response
+import time
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -102,8 +105,17 @@ async def model_info():
 
 prediction_logger = PredictionLogger()
 
+prediction_counter = Counter('predictions_total', 'Total number of predictions')
+prediction_latency = Histogram('prediction_latency_seconds', 'Prediction latency')
+
+@app.get("/metrics")
+async def metrics():
+    """Prometheus metrics endpoint."""
+    return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)
+
 @app.post("/predict", response_model=PredictionResponse)
 async def predict(request: PredictionRequest):
+    start_time = time.time()
     """Make RUL prediction."""
     if model is None:
         raise HTTPException(status_code=503, detail="Model not loaded")
@@ -134,6 +146,9 @@ async def predict(request: PredictionRequest):
         predicted_rul=float(prediction),
         model_version="Staging"
     )
+        
+        prediction_counter.inc()
+        prediction_latency.observe(time.time() - start_time)
         
         return PredictionResponse(
             predicted_rul=float(prediction),
