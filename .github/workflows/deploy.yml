@@ -24,15 +24,15 @@ jobs:
     
     - name: Configure Docker for GCR
       run: |
-        gcloud auth configure-docker us-docker.pkg.dev
+        gcloud auth configure-docker gcr.io
     
     - name: Build and Push Docker image
       run: |
-        docker build -t us-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/turbofan-api:${{ github.sha }} .
-        docker push us-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/turbofan-api:${{ github.sha }}
-        docker tag us-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/turbofan-api:${{ github.sha }} \
-                   us-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/turbofan-api:latest
-        docker push us-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/turbofan-api:latest
+        docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/turbofan-api:${{ github.sha }} .
+        docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/turbofan-api:${{ github.sha }}
+        docker tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/turbofan-api:${{ github.sha }} \
+                   gcr.io/${{ secrets.GCP_PROJECT_ID }}/turbofan-api:latest
+        docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/turbofan-api:latest
     
     - name: Deploy to GKE
       run: |
@@ -40,7 +40,7 @@ jobs:
           --zone ${{ secrets.GKE_ZONE }}
         
         kubectl set image deployment/turbofan-api \
-          turbofan-api=us-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/turbofan-api:${{ github.sha }}
+          turbofan-api=gcr.io/${{ secrets.GCP_PROJECT_ID }}/turbofan-api:${{ github.sha }}
         
         kubectl rollout status deployment/turbofan-api
     
@@ -69,17 +69,17 @@ jobs:
 
 #     - uses: google-github-actions/setup-gcloud@v2
 
-#     - run: gcloud auth configure-docker us-docker.pkg.dev --quiet
+#     - run: gcloud auth configure-docker gcr.io --quiet
 
 #     - run: |
-#         docker build -t us-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/ml-images/turbofan-api:${{ github.sha }} .
-#         docker push us-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/ml-images/turbofan-api:${{ github.sha }}
+#         docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/ml-images/turbofan-api:${{ github.sha }} .
+#         docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/ml-images/turbofan-api:${{ github.sha }}
 
 #     - run: |
 #         gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} \
 #           --zone ${{ secrets.GKE_ZONE }}
 
 #         kubectl set image deployment/turbofan-api \
-#           turbofan-api=us-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/ml-images/turbofan-api:${{ github.sha }}
+#           turbofan-api=gcr.io/${{ secrets.GCP_PROJECT_ID }}/ml-images/turbofan-api:${{ github.sha }}
 
 #         kubectl rollout status deployment/turbofan-api
