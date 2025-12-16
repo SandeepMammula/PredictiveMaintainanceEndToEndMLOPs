@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: turbofan-api
+  labels:
+    app: turbofan-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: turbofan-api
+  template:
+    metadata:
+      labels:
+        app: turbofan-api
+    spec:
+      containers:
+      - name: turbofan-api
+        image: gcr.io/YOUR_PROJECT_ID/turbofan-api:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: MODEL_VERSION
+          value: "Production"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
