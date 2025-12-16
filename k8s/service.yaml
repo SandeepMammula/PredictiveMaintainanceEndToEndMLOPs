@@ -1,15 +1,27 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: turbofan-api-service
+  name: turbofan-api-v1
   labels:
     app: turbofan-api
 spec:
-  type: LoadBalancer
   selector:
     app: turbofan-api
+    version: v1
   ports:
-  - name: http
-    protocol: TCP
-    port: 80
+  - port: 80
+    targetPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: turbofan-api-v2
+  labels:
+    app: turbofan-api
+spec:
+  selector:
+    app: turbofan-api
+    version: v2
+  ports:
+  - port: 80
     targetPort: 8000
