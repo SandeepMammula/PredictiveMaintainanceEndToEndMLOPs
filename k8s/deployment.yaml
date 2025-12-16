@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: turbofan-api
-        image: gcr.io/YOUR_PROJECT_ID/turbofan-api:latest
+        image: gcr.io/predictive-maintenance-mlops/turbofan-api:latest
         ports:
         - containerPort: 8000
         env:
