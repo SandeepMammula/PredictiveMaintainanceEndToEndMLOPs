@@ -9,6 +9,8 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      USE_GKE_GCLOUD_AUTH_PLUGIN: "True"
     
     steps:
     - name: Checkout code
@@ -21,6 +23,11 @@ jobs:
     
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v1
+
+    - name: Install GKE auth plugin
+      run: |
+        gcloud components install gke-gcloud-auth-plugin --quiet
+
     
     - name: Configure Docker for GCR
       run: |
